@@ -1,0 +1,94 @@
+observalbeservice.ts
+
+import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import {Student} from './Student';
+
+@Injectable()
+export class ActivityService {
+    httpdata;
+  url:string = "http://jsonplaceholder.typicode.com/users/1";
+  constructor(private http: Http) { }
+  public getActivitiesAnyType():Observable<any>{
+       this. getActivityofVoidType();
+      return this.http.get("https://jsonplaceholder.typicode.com/users").map(res=>res.json());
+  }
+  public getActivityofVoidType():void {
+    this.http.get("https://jsonplaceholder.typicode.com/users/2").map(data => data.json()).
+      subscribe(data => {
+        this.displaydata(data);
+        console.log(this.httpdata.id+',,,,,,,,,,,,,,,,');
+      },function(error) { console.log("Error happened" + error)},
+    function() { console.log("the subscription is completed in student type")});
+  }
+   public getActivitiesStudentType():Observable<Student>{
+      return this.http.get("https://jsonplaceholder.typicode.com/users/4").map(res => res.json());
+     //return null;
+   }
+
+ public getActivitiesStudentTypeArray():Observable<Student[]>{
+         return this.http.get("https://jsonplaceholder.typicode.com/users").map(res => res.json());
+     //return null;
+   }
+
+  public displaydata(res){
+    this.httpdata = res;
+  }
+}
+
+
+
+
+================================
+obserable.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { ActivityService } from '../obserable/activity.service';
+import { Student } from './Student';
+
+@Component({
+  selector: 'app-obserable',
+  templateUrl: './obserable.component.html',
+  styleUrls: ['./obserable.component.css']
+})
+
+
+export class ObserableComponent implements OnInit {
+
+  students: Student[];
+  student: Student;
+  constructor(private activityService: ActivityService) { }
+  httpData: any;
+
+
+  ngOnInit() {
+    this.getStudents();
+    this.getStudents1();
+    this.getStudentsArray();
+  }
+
+  student1: Student;
+  getStudents1(): void {
+      this.activityService.getActivitiesStudentType().subscribe(data => {this.displaydata1(data);console.log(this.student);});
+   }
+  
+  getStudentsArray(): void {
+      this.activityService.getActivitiesStudentTypeArray().subscribe(data => {this.displaydata1(data);console.log(data);});
+   }
+
+  getStudents(): void {
+    this.activityService.getActivitiesAnyType().
+      subscribe(data => {
+        this.displaydata(data);
+        console.log(this.httpData);
+      }, function (error) { console.log("Error happened" + error) },
+        function () { console.log("the subscription is completed") });
+  }
+
+  displaydata(data) { this.httpData = data; }
+  displaydata1(data) { this.student1 = data; }
+  displaydata11(data) { this.students = data; }
+
+}
